@@ -1,6 +1,7 @@
 """The five feature modules: earnings, safety, schemes, documents and grievances."""
 
 from dataclasses import asdict
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -20,6 +21,7 @@ from app.services.ai_client import AIClient, ImageInput
 from app.services.earnings import alert_message, offline_explanation, summarize
 from app.services.eligibility import match_schemes, offline_scheme_explanation, scheme_facts
 from app.services.pii import mask_pii
+from app.services.planner import plan_message, plan_week
 from app.services.safety import select_tips
 
 router = APIRouter(prefix="/api", tags=["features"])
@@ -51,6 +53,11 @@ async def earnings_summary(req: EarningsRequest, ai: AIClient = Depends(get_ai))
     facts.pop("daily", None)
     facts["alerts"] = [a["message"] for a in alerts]
     facts["currency"] = "INR"
+    plan = None
+    if req.profile.weekly_goal:
+        weekly = plan_week(req.profile.weekly_goal, req.entries, req.today or date.today())
+        plan = {**weekly.to_dict(), "message": plan_message(weekly, lang)}
+        facts["weekly_goal_plan"] = plan["message"]
     explanation = None
     if summary.days_worked:
         explanation = await ai_answer(
@@ -63,7 +70,7 @@ async def earnings_summary(req: EarningsRequest, ai: AIClient = Depends(get_ai))
         )
     data = summary.to_dict()
     data["alerts"] = alerts
-    return {"summary": data, "explanation": explanation}
+    return {"summary": data, "plan": plan, "explanation": explanation}
 
 
 # --- Safety -------------------------------------------------------------------------------
@@ -145,7 +152,7 @@ async def documents_explain(
     """Explain a pasted document or a photo of one. Personal numbers are masked first."""
     lang = offline_language(req.profile.language)
     image = None
-    if req.image_base64:
+    if req.image_base64 and req.image_mime:  # the schema guarantees both or neither
         try:
             data = documents.decode_image(req.image_base64, req.image_mime, settings.max_image_bytes)
         except documents.InvalidImageError as exc:

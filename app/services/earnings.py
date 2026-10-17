@@ -60,15 +60,18 @@ def money(value: float | None) -> str:
     return "—" if value is None else f"₹{value:,.0f}"
 
 
-def _net(entry: EarningEntry) -> float:
+def net_of(entry: EarningEntry) -> float:
+    """Take-home for one entry: pay + tips - platform cuts - fuel - other costs."""
+    """Take-home for one entry: pay + tips - platform cuts - fuel - other costs."""
     return entry.gross + entry.tips - entry.platform_deductions - entry.fuel_cost - entry.other_expenses
 
 
-def _per_hour(entries: list[EarningEntry]) -> float | None:
+def rate_per_hour(entries: list[EarningEntry]) -> float | None:
+    """Take-home per hour worked, or ``None`` when no hours are logged."""
     hours = sum(e.hours for e in entries)
     if hours <= 0:
         return None
-    return _round(sum(_net(e) for e in entries) / hours)
+    return _round(sum(net_of(e) for e in entries) / hours)
 
 
 def summarize(entries: list[EarningEntry], today: date | None = None) -> EarningsSummary:
@@ -83,10 +86,10 @@ def summarize(entries: list[EarningEntry], today: date | None = None) -> Earning
     summary.total_tips = _round(sum(e.tips for e in entries))
     summary.total_deductions = _round(sum(e.platform_deductions for e in entries))
     summary.total_expenses = _round(sum(e.fuel_cost + e.other_expenses for e in entries))
-    summary.net_earnings = _round(sum(_net(e) for e in entries))
+    summary.net_earnings = _round(sum(net_of(e) for e in entries))
     summary.total_hours = _round(sum(e.hours for e in entries))
     summary.total_km = _round(sum(e.km for e in entries))
-    summary.net_per_hour = _per_hour(entries)
+    summary.net_per_hour = rate_per_hour(entries)
     if summary.total_km > 0:
         summary.net_per_km = _round(summary.net_earnings / summary.total_km)
     earned = summary.total_gross + summary.total_tips
@@ -99,24 +102,24 @@ def summarize(entries: list[EarningEntry], today: date | None = None) -> Earning
         platforms[entry.platform].append(entry)
     for name, items in sorted(platforms.items()):
         summary.by_platform[name] = {
-            "net": _round(sum(_net(e) for e in items)),
+            "net": _round(sum(net_of(e) for e in items)),
             "hours": _round(sum(e.hours for e in items)),
-            "net_per_hour": _per_hour(items) or 0.0,
+            "net_per_hour": rate_per_hour(items) or 0.0,
         }
     if len(summary.by_platform) > 1:
         summary.best_platform = max(summary.by_platform, key=lambda p: summary.by_platform[p]["net_per_hour"])
 
     by_day: dict[date, float] = defaultdict(float)
     for entry in entries:
-        by_day[entry.day] += _net(entry)
+        by_day[entry.day] += net_of(entry)
     summary.daily = [{"day": d.isoformat(), "net": _round(v)} for d, v in sorted(by_day.items())]
 
     week_start = today - timedelta(days=6)
     prev_start = week_start - timedelta(days=7)
     this_week = [e for e in entries if week_start <= e.day <= today]
     last_week = [e for e in entries if prev_start <= e.day < week_start]
-    summary.this_week_per_hour = _per_hour(this_week)
-    summary.last_week_per_hour = _per_hour(last_week)
+    summary.this_week_per_hour = rate_per_hour(this_week)
+    summary.last_week_per_hour = rate_per_hour(last_week)
 
     summary.alerts = _alerts(summary, entries)
     return summary

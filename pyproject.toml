@@ -21,6 +21,8 @@ ignore = [
 "app/services/earnings.py" = ["E501"]
 "app/services/context_engine.py" = ["E501"]
 "app/services/grievance.py" = ["E501"]
+"app/services/planner.py" = ["E501"]
+"app/services/assistant.py" = ["E501"]
 "tests/*" = ["S101", "S106"]
 
 [tool.pytest.ini_options]
@@ -29,3 +31,12 @@ addopts = "-q"
 
 [tool.coverage.run]
 source = ["app"]
+
+[tool.mypy]
+python_version = "3.12"
+packages = ["app"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+check_untyped_defs = true

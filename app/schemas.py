@@ -44,6 +44,16 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
 
+def _plausible_today(value: date | None) -> date | None:
+    """The phone's local date may differ from the server's by a day across time zones, not more."""
+    if value is not None and abs((value - date.today()).days) > 1:
+        raise ValueError("Date must be today's date on your phone")
+    return value
+
+
+ClientToday = Field(default=None, description="The worker's local date (phones may be a day ahead of UTC)")
+
+
 class Profile(StrictModel):
     """Worker context. Kept on the worker's device; sent with each request, never stored."""
 
@@ -57,6 +67,7 @@ class Profile(StrictModel):
     pays_income_tax: bool = False
     eshram_registered: bool = False
     has_bank_account: bool = True
+    weekly_goal: int | None = Field(default=None, ge=100, le=200_000)  # take-home target, ₹/week
 
     @field_validator("state")
     @classmethod
@@ -84,6 +95,9 @@ class EarningsRequest(StrictModel):
     profile: Profile = Field(default_factory=Profile)
     entries: list[EarningEntry] = Field(default_factory=list, max_length=400)
     question: str | None = Field(default=None, max_length=500)
+    today: date | None = ClientToday
+
+    _check_today = field_validator("today")(_plausible_today)
 
 
 class SafetyRequest(StrictModel):
@@ -146,12 +160,19 @@ class ChatRequest(StrictModel):
     profile: Profile = Field(default_factory=Profile)
     message: str = Field(min_length=1, max_length=1000)
     entries: list[EarningEntry] = Field(default_factory=list, max_length=400)
+    hour: int = Field(default=12, ge=0, le=23)
+    today: date | None = ClientToday
+
+    _check_today = field_validator("today")(_plausible_today)
 
 
 class HomeRequest(StrictModel):
     profile: Profile = Field(default_factory=Profile)
     hour: int = Field(default=12, ge=0, le=23)
     entries: list[EarningEntry] = Field(default_factory=list, max_length=400)
+    today: date | None = ClientToday
+
+    _check_today = field_validator("today")(_plausible_today)
 
 
 Source = Literal["gemini", "offline"]

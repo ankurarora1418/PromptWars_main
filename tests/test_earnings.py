@@ -77,3 +77,10 @@ def test_alert_text_available_in_hindi():
     pay_drop = next(a for a in summary.alerts if a.code == "pay_drop")
     assert "हफ्ते" in alert_message(pay_drop, "hi")
     assert "₹" in offline_explanation(summary, "hi")
+
+
+def test_money_is_formatted_for_people():
+    entries = [EarningEntry(day=TODAY, gross=10510, hours=10, platform_deductions=3000)]
+    text = offline_explanation(summarize(entries), "en")
+    assert "₹7,510" in text and "₹3,000" in text
+    assert ".0" not in text

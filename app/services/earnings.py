@@ -55,6 +55,11 @@ def _round(value: float) -> float:
     return round(value, 2)
 
 
+def money(value: float | None) -> str:
+    """Format rupees for people: ₹10,510 rather than 10510.0."""
+    return "—" if value is None else f"₹{value:,.0f}"
+
+
 def _net(entry: EarningEntry) -> float:
     return entry.gross + entry.tips - entry.platform_deductions - entry.fuel_cost - entry.other_expenses
 
@@ -162,15 +167,15 @@ def _alerts(summary: EarningsSummary, entries: list[EarningEntry]) -> list[Alert
 
 _ALERT_TEXT = {
     "en": {
-        "pay_drop": "Your earnings per hour fell {drop_pct}% this week (₹{this_week}/hr vs ₹{last_week}/hr). If an incentive or payout is missing, raise a complaint.",
-        "high_deductions": "The platform kept {share_pct}% of your earnings (₹{amount}). Check each deduction; you can dispute wrong ones.",
+        "pay_drop": "Your earnings per hour fell {drop_pct}% this week ({this_week}/hr vs {last_week}/hr). If an incentive or payout is missing, raise a complaint.",
+        "high_deductions": "The platform kept {share_pct}% of your earnings ({amount}). Check each deduction; you can dispute wrong ones.",
         "high_expenses": "Fuel and other costs take {share_pct}% of your earnings. Planning routes and servicing your vehicle can cut this.",
         "long_hours": "You worked 12+ hours on {days}. Long shifts raise accident risk — take breaks and drink water.",
         "best_platform": "{platform} pays you the most per hour. Prefer it when you can choose.",
     },
     "hi": {
-        "pay_drop": "इस हफ्ते आपकी प्रति घंटा कमाई {drop_pct}% घटी (₹{this_week}/घंटा, पिछले हफ्ते ₹{last_week}/घंटा)। अगर कोई इंसेंटिव या भुगतान नहीं मिला है, तो शिकायत दर्ज करें।",
-        "high_deductions": "प्लेटफॉर्म ने आपकी कमाई का {share_pct}% (₹{amount}) काटा। हर कटौती जाँचें; गलत कटौती पर आपत्ति कर सकते हैं।",
+        "pay_drop": "इस हफ्ते आपकी प्रति घंटा कमाई {drop_pct}% घटी ({this_week}/घंटा, पिछले हफ्ते {last_week}/घंटा)। अगर कोई इंसेंटिव या भुगतान नहीं मिला है, तो शिकायत दर्ज करें।",
+        "high_deductions": "प्लेटफॉर्म ने आपकी कमाई का {share_pct}% ({amount}) काटा। हर कटौती जाँचें; गलत कटौती पर आपत्ति कर सकते हैं।",
         "high_expenses": "ईंधन और दूसरे खर्च आपकी कमाई का {share_pct}% ले रहे हैं। सही रास्ता चुनकर और गाड़ी की सर्विस करवाकर यह कम हो सकता है।",
         "long_hours": "आपने {days} को 12+ घंटे काम किया। लंबी शिफ्ट में दुर्घटना का खतरा बढ़ता है — आराम करें और पानी पिएँ।",
         "best_platform": "{platform} पर आपको प्रति घंटा सबसे ज़्यादा मिलता है। मौका हो तो इसे चुनें।",
@@ -184,6 +189,9 @@ def alert_message(alert: Alert, lang: str) -> str:
     data = dict(alert.data)
     if "days" in data:
         data["days"] = ", ".join(data["days"])
+    for key in ("this_week", "last_week", "amount"):
+        if key in data:
+            data[key] = money(data[key])
     return templates[alert.code].format(**data)
 
 
@@ -195,18 +203,18 @@ def offline_explanation(summary: EarningsSummary, lang: str) -> str:
             if lang == "hi"
             else "No earnings logged yet. Add each day's pay, hours and costs to see your real income."
         )
-    rate = f"₹{summary.net_per_hour}" if summary.net_per_hour is not None else "—"
+    rate = money(summary.net_per_hour)
     if lang == "hi":
         lines = [
-            f"{summary.days_worked} दिनों में आपकी असली कमाई (खर्च और कटौती के बाद): ₹{summary.net_earnings}",
+            f"{summary.days_worked} दिनों में आपकी असली कमाई (खर्च और कटौती के बाद): {money(summary.net_earnings)}",
             f"- प्रति घंटा: {rate}",
-            f"- कुल खर्च: ₹{summary.total_expenses}, प्लेटफॉर्म कटौती: ₹{summary.total_deductions}",
+            f"- कुल खर्च: {money(summary.total_expenses)}, प्लेटफॉर्म कटौती: {money(summary.total_deductions)}",
         ]
     else:
         lines = [
-            f"Your real take-home over {summary.days_worked} days (after costs and deductions): ₹{summary.net_earnings}",
+            f"Your real take-home over {summary.days_worked} days (after costs and deductions): {money(summary.net_earnings)}",
             f"- Per hour: {rate}",
-            f"- Total costs: ₹{summary.total_expenses}, platform deductions: ₹{summary.total_deductions}",
+            f"- Total costs: {money(summary.total_expenses)}, platform deductions: {money(summary.total_deductions)}",
         ]
     lines += [f"- {alert_message(a, lang)}" for a in summary.alerts]
     return "\n".join(lines)

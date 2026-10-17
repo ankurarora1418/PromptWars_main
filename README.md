@@ -4,6 +4,8 @@ A multilingual, GenAI-powered assistant for India's gig and informal workers —
 
 > **Chosen vertical:** Gig Worker Companion — PromptWars main challenge
 >
+> **Live demo:** https://saathi-299065900758.asia-south1.run.app (Google Cloud Run, Mumbai · Gemini enabled)
+>
 > **In one line:** a smart, dynamic assistant that reads each worker's context (work type, shift, local time, logged earnings, weekly goal, scheme status) and decides — in transparent, tested code — what they should do next, then uses Gemini to explain it in their own language.
 
 ### What's new in this version

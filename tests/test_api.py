@@ -61,7 +61,26 @@ def test_index_served_with_security_headers(client):
 def test_home_cards(client):
     body = client.post("/api/home", json={"profile": PROFILE, "hour": 23}).json()
     assert body["cards"][0]["id"] == "night_safety"
-    assert all({"title", "body", "module"} <= set(card) for card in body["cards"])
+    assert all({"title", "body", "module", "reason"} <= set(card) for card in body["cards"])
+    assert all(card["reason"] for card in body["cards"])  # every decision is explained
+
+
+def test_home_goal_card_flags_unsafe_goal(client):
+    profile = {**PROFILE, "weekly_goal": 200_000}
+    body = client.post(
+        "/api/home",
+        json={"profile": profile, "hour": 10, "entries": week_entries(), "today": TODAY.isoformat()},
+    ).json()
+    goal = next(card for card in body["cards"] if card["id"] == "goal")
+    assert goal["tone"] == "warning"
+    assert goal["params"]["status"] == "unsafe"
+    assert "₹2,00,000" in goal["reason"] or "200,000" in goal["reason"]
+
+
+def test_home_rejects_implausible_client_date(client):
+    far = (TODAY + timedelta(days=10)).isoformat()
+    response = client.post("/api/home", json={"profile": PROFILE, "today": far})
+    assert response.status_code == 422
 
 
 def test_chat_routes_intent_and_masks_pii():
@@ -79,7 +98,43 @@ def test_chat_offline_fallback():
     body = client.post("/api/chat", json={"profile": PROFILE, "message": "hello"}).json()
     assert body["intent"] == "general"
     assert body["answer"]["source"] == "offline"
-    assert "Earnings" in body["answer"]["text"]
+    text = body["answer"]["text"]
+    assert "earnings" in text
+    assert "Right now, for you" in text  # falls back to this worker's top priorities
+    assert body["suggested_module"]  # still offers a next step
+
+
+def test_chat_covers_two_intents_and_names_where_to_file_offline():
+    client, _ = make_client(FakeAI(enabled=False))
+    message = "My payout is late and my ID got blocked"
+    body = client.post("/api/chat", json={"profile": PROFILE, "message": message}).json()
+    assert body["intents"][:2] == ["grievance", "earnings"]
+    assert body["suggested_modules"] == ["grievance", "earnings"]
+    text = body["answer"]["text"]
+    assert "For " in text and ":" in text  # where to file this complaint type
+    assert "not logged any earnings" in text
+
+
+def test_chat_offline_earnings_answer_uses_real_numbers_and_goal():
+    client, _ = make_client(FakeAI(enabled=False))
+    profile = {**PROFILE, "weekly_goal": 9000}
+    body = client.post(
+        "/api/chat",
+        json={"profile": profile, "message": "How much did I earn per hour?", "entries": week_entries()},
+    ).json()
+    assert body["intent"] == "earnings"
+    text = body["answer"]["text"]
+    assert "₹4,000" in text  # exact take-home computed in code
+    assert "goal" in text.lower() or "₹9,000" in text
+
+
+def test_chat_prompt_carries_worker_priorities_for_gemini():
+    client, ai = make_client()
+    client.post("/api/chat", json={"profile": PROFILE, "message": "Is it safe to ride now?", "hour": 23})
+    prompt = ai.prompts[-1]
+    assert "current_priorities" in prompt
+    assert "Night shift safety" in prompt
+    assert "safety_tips" in prompt
 
 
 # --- earnings -----------------------------------------------------------------------------
@@ -92,6 +147,32 @@ def test_earnings_summary_numbers_and_explanation():
     assert body["summary"]["net_per_hour"] == 100
     assert body["explanation"]["source"] == "gemini"
     assert '"net_earnings": 4000' in ai.prompts[-1]
+
+
+def test_earnings_returns_weekly_plan_when_goal_set():
+    client, ai = make_client()
+    profile = {**PROFILE, "weekly_goal": 5000}
+    body = client.post(
+        "/api/earnings/summary",
+        json={"profile": profile, "entries": week_entries(), "today": TODAY.isoformat()},
+    ).json()
+    plan = body["plan"]
+    assert plan["goal"] == 5000
+    assert plan["status"] in {"achieved", "on_track", "stretch", "unsafe", "week_over"}
+    assert 0 <= plan["progress"] <= 1
+    assert plan["message"]
+    assert "weekly_goal_plan" in ai.prompts[-1]
+
+
+def test_earnings_plan_absent_without_goal(client):
+    body = client.post("/api/earnings/summary", json={"profile": PROFILE, "entries": week_entries()}).json()
+    assert body["plan"] is None
+
+
+def test_weekly_goal_is_bounded(client):
+    profile = {**PROFILE, "weekly_goal": 5}
+    response = client.post("/api/earnings/summary", json={"profile": profile, "entries": []})
+    assert response.status_code == 422
 
 
 def test_earnings_without_entries_skips_ai():

@@ -84,3 +84,49 @@ def test_deduction_card_carries_amount(profile):
 def test_registered_worker_not_nagged_about_eshram(profile):
     registered = profile.model_copy(update={"eshram_registered": True})
     assert "eshram" not in [card.id for card in build_cards(registered, 11, [])]
+
+
+# --- multi-intent routing and the assistant ------------------------------------------------
+
+
+def test_rank_intents_returns_both_topics_strongest_first():
+    from app.services.intent import rank_intents
+
+    ranked = [i.name for i in rank_intents("payout late and my account is blocked, kya karu")]
+    assert ranked[0] == "grievance"
+    assert "earnings" in ranked
+    assert rank_intents("hello there") == []
+
+
+def test_every_home_card_explains_itself_in_hindi():
+    from app.schemas import Profile
+    from app.services.context_engine import build_cards
+
+    cards = build_cards(Profile(language="hi", state="Delhi"), hour=22, entries=[])
+    assert cards and all(card.reason for card in cards)
+    assert any("रात" in card.reason for card in cards)
+
+
+def test_assistant_documents_and_hindi_general_answers():
+    from app.schemas import ChatRequest, Profile
+    from app.services.assistant import build_context
+
+    docs = build_context(ChatRequest(message="explain this notice letter", profile=Profile()))
+    assert docs.intents == ["documents"]
+    assert "Documents" in docs.offline_text
+
+    general = build_context(ChatRequest(message="नमस्ते", profile=Profile(language="hi")))
+    assert general.intents == ["general"]
+    assert "अभी आपके लिए ज़रूरी" in general.offline_text
+    assert general.suggested_modules  # points to the top priority card
+
+
+def test_assistant_schemes_answer_lists_eligible_schemes():
+    from app.schemas import ChatRequest, Profile
+    from app.services.assistant import build_context
+
+    profile = Profile(age=30, monthly_income=12000, state="Punjab", has_bank_account=True)
+    context = build_context(ChatRequest(message="which government scheme can I get?", profile=profile))
+    assert context.intents[0] == "schemes"
+    assert "qualify" in context.offline_text or "One step away" in context.offline_text
+    assert context.facts["schemes"]

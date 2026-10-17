@@ -157,13 +157,27 @@ def _count(text: str, words: tuple[str, ...]) -> int:
     return total
 
 
-def classify(message: str) -> Intent:
-    """Return the best-matching module for ``message``, or ``general``."""
+def _scores(message: str) -> dict[str, int]:
     text = message.lower()
     scores = {name: _count(text, words) for name, words in _KEYWORDS.items()}
     for name, phrases in _STRONG.items():
         scores[name] += 2 * sum(1 for p in phrases if p in text)
-    best = max(INTENTS, key=lambda name: scores[name])
-    if scores[best] == 0:
-        return Intent("general", 0)
-    return Intent(best, scores[best])
+    return scores
+
+
+def classify(message: str) -> Intent:
+    """Return the best-matching module for ``message``, or ``general``."""
+    ranked = rank_intents(message, limit=1)
+    return ranked[0] if ranked else Intent("general", 0)
+
+
+def rank_intents(message: str, limit: int = 2) -> list[Intent]:
+    """All matching modules, strongest first (ties keep the ``INTENTS`` order).
+
+    A question such as "my payout is late and I was blocked" touches both earnings and
+    grievance; the chat uses the top two so the answer can cover both.
+    """
+    scores = _scores(message)
+    matched = [Intent(name, scores[name]) for name in INTENTS if scores[name] > 0]
+    matched.sort(key=lambda intent: -intent.score)  # stable sort keeps INTENTS order on ties
+    return matched[:limit]

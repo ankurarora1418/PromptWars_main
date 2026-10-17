@@ -5,14 +5,22 @@ description = "Saathi — a multilingual GenAI companion for gig and informal wo
 requires-python = ">=3.12"
 
 [tool.ruff]
-line-length = 100
+line-length = 110
 target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF"]
-ignore = ["B008"]  # FastAPI's Depends() in defaults is idiomatic
+ignore = [
+    "B008",    # FastAPI's Depends() in defaults is idiomatic
+    "RUF001",  # multilingual app: Indic scripts and ₹ are intentional
+    "RUF003",
+]
 
 [tool.ruff.lint.per-file-ignores]
+# User-facing translation strings are kept on one line for translators.
+"app/services/earnings.py" = ["E501"]
+"app/services/context_engine.py" = ["E501"]
+"app/services/grievance.py" = ["E501"]
 "tests/*" = ["S101", "S106"]
 
 [tool.pytest.ini_options]

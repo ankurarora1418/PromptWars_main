@@ -1,0 +1,84 @@
+{
+  "helplines": {
+    "emergency": {"number": "112", "name": {"en": "Emergency (police, fire, ambulance)", "hi": "आपातकाल (पुलिस, फायर, एंबुलेंस)"}},
+    "ambulance": {"number": "108", "name": {"en": "Ambulance", "hi": "एंबुलेंस"}},
+    "women": {"number": "181", "name": {"en": "Women helpline", "hi": "महिला हेल्पलाइन"}},
+    "cyber": {"number": "1930", "name": {"en": "Cyber fraud helpline (also cybercrime.gov.in)", "hi": "साइबर धोखाधड़ी हेल्पलाइन (cybercrime.gov.in भी)"}},
+    "eshram": {"number": "14434", "name": {"en": "e-Shram helpline", "hi": "ई-श्रम हेल्पलाइन"}},
+    "ayushman": {"number": "14555", "name": {"en": "Ayushman Bharat helpline", "hi": "आयुष्मान भारत हेल्पलाइन"}}
+  },
+  "issues": {
+    "deactivation": {
+      "label": {"en": "ID blocked / deactivated", "hi": "आईडी बंद / ब्लॉक"},
+      "file_with": {
+        "en": ["The platform's in-app support and its Grievance Officer (listed in the app or website)", "Your state labour department or gig workers welfare board (Rajasthan, Karnataka)", "A gig workers' union in your city can support you"],
+        "hi": ["प्लेटफॉर्म का इन-ऐप सपोर्ट और शिकायत अधिकारी (ऐप या वेबसाइट पर लिखा होता है)", "राज्य श्रम विभाग या गिग कामगार कल्याण बोर्ड (राजस्थान, कर्नाटक)", "शहर की गिग कामगार यूनियन मदद कर सकती है"]
+      },
+      "helplines": []
+    },
+    "unpaid_earnings": {
+      "label": {"en": "Payout not received", "hi": "भुगतान नहीं मिला"},
+      "file_with": {
+        "en": ["The platform's in-app support, then its Grievance Officer", "Your state labour department if it is not resolved"],
+        "hi": ["प्लेटफॉर्म का इन-ऐप सपोर्ट, फिर शिकायत अधिकारी", "हल न हो तो राज्य श्रम विभाग"]
+      },
+      "helplines": []
+    },
+    "wrong_deduction": {
+      "label": {"en": "Wrong penalty or deduction", "hi": "गलत जुर्माना या कटौती"},
+      "file_with": {
+        "en": ["The platform's in-app support, then its Grievance Officer", "Your state labour department or welfare board if it is not resolved"],
+        "hi": ["प्लेटफॉर्म का इन-ऐप सपोर्ट, फिर शिकायत अधिकारी", "हल न हो तो राज्य श्रम विभाग या कल्याण बोर्ड"]
+      },
+      "helplines": []
+    },
+    "incentive_not_paid": {
+      "label": {"en": "Incentive or bonus not paid", "hi": "इंसेंटिव या बोनस नहीं मिला"},
+      "file_with": {
+        "en": ["The platform's in-app support with screenshots of the incentive offer", "The platform's Grievance Officer if support does not reply in 7 days"],
+        "hi": ["इंसेंटिव ऑफर के स्क्रीनशॉट के साथ प्लेटफॉर्म का इन-ऐप सपोर्ट", "7 दिन में जवाब न मिले तो प्लेटफॉर्म का शिकायत अधिकारी"]
+      },
+      "helplines": []
+    },
+    "employer_wage_theft": {
+      "label": {"en": "Daily wages not paid by employer or contractor", "hi": "मालिक या ठेकेदार ने मज़दूरी नहीं दी"},
+      "file_with": {
+        "en": ["Give the letter to the employer or contractor and keep a copy", "Your district Labour Officer / Labour Commissioner office", "Local legal aid (District Legal Services Authority) for free legal help"],
+        "hi": ["पत्र मालिक या ठेकेदार को दें और एक कॉपी रखें", "ज़िला श्रम अधिकारी / श्रम आयुक्त कार्यालय", "मुफ्त कानूनी मदद के लिए ज़िला विधिक सेवा प्राधिकरण"]
+      },
+      "helplines": []
+    },
+    "accident_injury": {
+      "label": {"en": "Accident or injury at work", "hi": "काम के दौरान दुर्घटना या चोट"},
+      "file_with": {
+        "en": ["Get medical help first; call 112 or 108 in an emergency", "The platform's safety or insurance team (most platforms offer accident cover)", "Police report (FIR) if a vehicle or another person was involved", "Your PMSBY insurance claim through your bank, if enrolled"],
+        "hi": ["पहले इलाज करवाएँ; आपात स्थिति में 112 या 108 पर कॉल करें", "प्लेटफॉर्म की सेफ्टी या बीमा टीम (ज़्यादातर प्लेटफॉर्म दुर्घटना कवर देते हैं)", "किसी गाड़ी या व्यक्ति के शामिल होने पर पुलिस रिपोर्ट (FIR)", "अगर PMSBY है तो बैंक से बीमा दावा"]
+      },
+      "helplines": ["emergency", "ambulance"]
+    },
+    "harassment": {
+      "label": {"en": "Harassment or abuse", "hi": "उत्पीड़न या दुर्व्यवहार"},
+      "file_with": {
+        "en": ["If you are in danger, call 112 now", "The platform's in-app safety / SOS and support", "Police complaint", "Women helpline 181"],
+        "hi": ["खतरे में हैं तो अभी 112 पर कॉल करें", "प्लेटफॉर्म का इन-ऐप सेफ्टी / SOS और सपोर्ट", "पुलिस शिकायत", "महिला हेल्पलाइन 181"]
+      },
+      "helplines": ["emergency", "women"]
+    },
+    "payment_fraud": {
+      "label": {"en": "UPI / online payment fraud", "hi": "UPI / ऑनलाइन भुगतान धोखाधड़ी"},
+      "file_with": {
+        "en": ["Call 1930 immediately — fast reporting can freeze the money", "Report at cybercrime.gov.in", "Inform your bank and block the card or UPI if needed"],
+        "hi": ["तुरंत 1930 पर कॉल करें — जल्दी शिकायत से पैसा रुक सकता है", "cybercrime.gov.in पर रिपोर्ट करें", "बैंक को बताएँ और ज़रूरत हो तो कार्ड या UPI ब्लॉक करें"]
+      },
+      "helplines": ["cyber"]
+    },
+    "other": {
+      "label": {"en": "Other problem", "hi": "अन्य समस्या"},
+      "file_with": {
+        "en": ["The platform's or employer's support, then their Grievance Officer", "Your state labour department"],
+        "hi": ["प्लेटफॉर्म या मालिक का सपोर्ट, फिर शिकायत अधिकारी", "राज्य श्रम विभाग"]
+      },
+      "helplines": []
+    }
+  }
+}

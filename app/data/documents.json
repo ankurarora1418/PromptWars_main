@@ -1,0 +1,8 @@
+{
+  "aadhaar": {"en": "Aadhaar card", "hi": "आधार कार्ड"},
+  "aadhaar_linked_mobile": {"en": "Mobile phone linked to your Aadhaar (for OTP)", "hi": "आधार से जुड़ा मोबाइल फोन (OTP के लिए)"},
+  "bank_account": {"en": "Savings or Jan Dhan bank account details (passbook with IFSC)", "hi": "बचत या जन धन बैंक खाते की जानकारी (IFSC वाली पासबुक)"},
+  "nominee_details": {"en": "Nominee's name, relation and date of birth", "hi": "नॉमिनी का नाम, रिश्ता और जन्म तिथि"},
+  "eshram_card": {"en": "e-Shram card (UAN number)", "hi": "ई-श्रम कार्ड (UAN नंबर)"},
+  "work_records": {"en": "Proof of work: app screenshots, payout statements or ID card from the platform or employer", "hi": "काम का सबूत: ऐप स्क्रीनशॉट, भुगतान विवरण या प्लेटफॉर्म/मालिक का आईडी कार्ड"}
+}

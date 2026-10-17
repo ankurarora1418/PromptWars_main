@@ -1,0 +1,154 @@
+[
+  {
+    "id": "eshram",
+    "category": "registration",
+    "name": {"en": "e-Shram card (national registration for unorganised workers)", "hi": "ई-श्रम कार्ड (असंगठित कामगारों का राष्ट्रीय पंजीकरण)"},
+    "summary": {
+      "en": "Free national registration that gives you an e-Shram card. It is the gateway to government welfare for gig and informal workers, including Ayushman Bharat health cover for platform workers.",
+      "hi": "मुफ्त राष्ट्रीय पंजीकरण, जिससे ई-श्रम कार्ड मिलता है। यह गिग और असंगठित कामगारों के लिए सरकारी योजनाओं का रास्ता है, जिसमें प्लेटफॉर्म कामगारों के लिए आयुष्मान भारत स्वास्थ्य कवर भी शामिल है।"
+    },
+    "benefit": {"en": "e-Shram card and entry into the national worker database", "hi": "ई-श्रम कार्ड और राष्ट्रीय कामगार डेटाबेस में नाम"},
+    "cost": {"en": "Free", "hi": "मुफ्त"},
+    "how_to_apply": {
+      "en": "Register yourself at eshram.gov.in with Aadhaar and the mobile number linked to it, or visit a Common Service Centre (CSC). Helpline 14434.",
+      "hi": "eshram.gov.in पर आधार और उससे जुड़े मोबाइल नंबर से खुद पंजीकरण करें, या नज़दीकी कॉमन सर्विस सेंटर (CSC) जाएँ। हेल्पलाइन 14434।"
+    },
+    "documents": ["aadhaar", "aadhaar_linked_mobile", "bank_account"],
+    "rules": {"min_age": 16, "max_age": 59, "exclude_epfo_esic": true, "exclude_income_tax": true},
+    "official_url": "https://eshram.gov.in",
+    "source_url": "https://beta.eshram.gov.in/faqs"
+  },
+  {
+    "id": "pmjay_platform",
+    "category": "health",
+    "name": {"en": "Ayushman Bharat PM-JAY health cover for platform workers", "hi": "प्लेटफॉर्म कामगारों के लिए आयुष्मान भारत PM-JAY स्वास्थ्य कवर"},
+    "summary": {
+      "en": "Platform workers (delivery, cab and bike-taxi partners) registered on e-Shram can get hospital treatment cover under Ayushman Bharat PM-JAY.",
+      "hi": "ई-श्रम पर पंजीकृत प्लेटफॉर्म कामगार (डिलीवरी, कैब, बाइक-टैक्सी) आयुष्मान भारत PM-JAY के तहत अस्पताल इलाज का कवर पा सकते हैं।"
+    },
+    "benefit": {"en": "Hospital treatment up to ₹5 lakh per family per year at empanelled hospitals", "hi": "सूचीबद्ध अस्पतालों में प्रति परिवार प्रति वर्ष ₹5 लाख तक का इलाज"},
+    "cost": {"en": "Free", "hi": "मुफ्त"},
+    "how_to_apply": {
+      "en": "First register on e-Shram as a platform worker. Then check your Ayushman card status at beneficiary.nha.gov.in or call 14555.",
+      "hi": "पहले ई-श्रम पर प्लेटफॉर्म कामगार के रूप में पंजीकरण करें। फिर beneficiary.nha.gov.in पर आयुष्मान कार्ड देखें या 14555 पर कॉल करें।"
+    },
+    "documents": ["aadhaar", "eshram_card"],
+    "rules": {"min_age": 16, "work_types": ["delivery", "ride_driver"], "requires_eshram": true},
+    "official_url": "https://beneficiary.nha.gov.in",
+    "source_url": "https://www.newsonair.gov.in/labour-employment-ministry-urges-platform-workers-to-register-themselves-on-e-shram-portal-to-access-benefits-of-ab-pmjay"
+  },
+  {
+    "id": "pm_sym",
+    "category": "pension",
+    "name": {"en": "PM Shram Yogi Maan-dhan (PM-SYM) pension", "hi": "प्रधानमंत्री श्रम योगी मान-धन (PM-SYM) पेंशन"},
+    "summary": {
+      "en": "A voluntary pension scheme for unorganised workers. You pay a small monthly amount and the government pays the same amount into your account.",
+      "hi": "असंगठित कामगारों के लिए स्वैच्छिक पेंशन योजना। आप हर महीने छोटी रकम जमा करते हैं और सरकार भी उतनी ही रकम डालती है।"
+    },
+    "benefit": {"en": "Assured pension of ₹3,000 a month after age 60; spouse gets 50% if you pass away", "hi": "60 साल के बाद ₹3,000 मासिक पेंशन; मृत्यु होने पर जीवनसाथी को 50%"},
+    "cost": {"en": "₹55 to ₹200 a month depending on your joining age, auto-debited until age 60", "hi": "उम्र के हिसाब से ₹55 से ₹200 प्रति माह, 60 साल तक खाते से अपने आप कटेगा"},
+    "how_to_apply": {
+      "en": "Visit a Common Service Centre (CSC) with Aadhaar and your savings or Jan Dhan bank account details, or apply at maandhan.in.",
+      "hi": "आधार और बचत या जन धन बैंक खाते की जानकारी लेकर कॉमन सर्विस सेंटर (CSC) जाएँ, या maandhan.in पर आवेदन करें।"
+    },
+    "documents": ["aadhaar", "bank_account"],
+    "rules": {"min_age": 18, "max_age": 40, "max_monthly_income": 15000, "exclude_epfo_esic": true, "exclude_income_tax": true, "requires_bank_account": true},
+    "official_url": "https://maandhan.in",
+    "source_url": "https://barpeta.assam.gov.in/scheme-page/pm-sym"
+  },
+  {
+    "id": "pmsby",
+    "category": "insurance",
+    "name": {"en": "PM Suraksha Bima Yojana (PMSBY) accident insurance", "hi": "प्रधानमंत्री सुरक्षा बीमा योजना (PMSBY) दुर्घटना बीमा"},
+    "summary": {
+      "en": "Very low-cost accident insurance through your bank account. Important for anyone working on the road.",
+      "hi": "बैंक खाते के ज़रिए बहुत सस्ता दुर्घटना बीमा। सड़क पर काम करने वालों के लिए बहुत ज़रूरी।"
+    },
+    "benefit": {"en": "₹2 lakh for accidental death or full disability, ₹1 lakh for partial disability", "hi": "दुर्घटना में मृत्यु या पूरी विकलांगता पर ₹2 लाख, आंशिक विकलांगता पर ₹1 लाख"},
+    "cost": {"en": "₹20 a year, auto-debited from your bank account", "hi": "₹20 प्रति वर्ष, बैंक खाते से अपने आप कटेगा"},
+    "how_to_apply": {
+      "en": "Ask your bank branch or use your bank's app or net banking to enrol in PMSBY. Keep your nominee details ready.",
+      "hi": "अपनी बैंक शाखा में पूछें या बैंक ऐप/नेट बैंकिंग से PMSBY में नामांकन करें। नॉमिनी की जानकारी तैयार रखें।"
+    },
+    "documents": ["aadhaar", "bank_account", "nominee_details"],
+    "rules": {"min_age": 18, "max_age": 70, "requires_bank_account": true},
+    "official_url": "https://jansuraksha.gov.in",
+    "source_url": "https://jansuraksha.gov.in"
+  },
+  {
+    "id": "pmjjby",
+    "category": "insurance",
+    "name": {"en": "PM Jeevan Jyoti Bima Yojana (PMJJBY) life insurance", "hi": "प्रधानमंत्री जीवन ज्योति बीमा योजना (PMJJBY) जीवन बीमा"},
+    "summary": {
+      "en": "Low-cost life insurance through your bank account that protects your family.",
+      "hi": "बैंक खाते के ज़रिए सस्ता जीवन बीमा जो आपके परिवार की रक्षा करता है।"
+    },
+    "benefit": {"en": "₹2 lakh to your family on death from any cause", "hi": "किसी भी कारण से मृत्यु पर परिवार को ₹2 लाख"},
+    "cost": {"en": "₹436 a year, auto-debited from your bank account (renews every year around end of May)", "hi": "₹436 प्रति वर्ष, बैंक खाते से अपने आप कटेगा (हर साल मई के अंत में नवीनीकरण)"},
+    "how_to_apply": {
+      "en": "Enrol at your bank branch or through your bank's app or net banking. Keep nominee details ready.",
+      "hi": "बैंक शाखा में या बैंक ऐप/नेट बैंकिंग से नामांकन करें। नॉमिनी की जानकारी तैयार रखें।"
+    },
+    "documents": ["aadhaar", "bank_account", "nominee_details"],
+    "rules": {"min_age": 18, "max_age": 50, "requires_bank_account": true},
+    "official_url": "https://jansuraksha.gov.in",
+    "source_url": "https://www.icici.bank.in/personal-banking/insurance/government-schemes/pmjjby"
+  },
+  {
+    "id": "code_social_security",
+    "category": "rights",
+    "name": {"en": "Your rights under the Code on Social Security, 2020", "hi": "सामाजिक सुरक्षा संहिता, 2020 के तहत आपके अधिकार"},
+    "summary": {
+      "en": "This national law (in force since 21 November 2025) recognises gig and platform workers by name. It allows social security schemes for life and disability cover, accident insurance, health and maternity benefits and old-age protection, funded partly by platforms (aggregators).",
+      "hi": "यह राष्ट्रीय कानून (21 नवंबर 2025 से लागू) गिग और प्लेटफॉर्म कामगारों को कानूनी पहचान देता है। इसमें जीवन व विकलांगता कवर, दुर्घटना बीमा, स्वास्थ्य, मातृत्व और बुढ़ापे की सुरक्षा की योजनाएँ बन सकती हैं, जिनका कुछ पैसा प्लेटफॉर्म (एग्रीगेटर) देंगे।"
+    },
+    "benefit": {"en": "Legal recognition; future scheme benefits need about 90 days of work with one platform or 120 days across platforms in a year", "hi": "कानूनी पहचान; आगे की योजनाओं के लाभ के लिए साल में एक प्लेटफॉर्म पर लगभग 90 दिन या कई प्लेटफॉर्म पर 120 दिन काम ज़रूरी"},
+    "cost": {"en": "Free", "hi": "मुफ्त"},
+    "how_to_apply": {
+      "en": "Register on e-Shram and keep a record of the days you work on each platform. Platforms must also register their workers on the government portal.",
+      "hi": "ई-श्रम पर पंजीकरण करें और हर प्लेटफॉर्म पर काम के दिनों का रिकॉर्ड रखें। प्लेटफॉर्म को भी अपने कामगारों का सरकारी पोर्टल पर पंजीकरण करना होता है।"
+    },
+    "documents": ["aadhaar", "work_records"],
+    "rules": {"min_age": 16, "work_types": ["delivery", "ride_driver"]},
+    "official_url": "https://labour.gov.in",
+    "source_url": "https://www.taxmann.com/post/blog/analysis-aggregator-obligations-code-on-social-security/"
+  },
+  {
+    "id": "rajasthan_gig_act",
+    "category": "state",
+    "name": {"en": "Rajasthan Platform-Based Gig Workers Act, 2023", "hi": "राजस्थान प्लेटफॉर्म आधारित गिग कामगार अधिनियम, 2023"},
+    "summary": {
+      "en": "Rajasthan's law creates a welfare board for platform-based gig workers, registration of workers, and a welfare fund paid into by platforms.",
+      "hi": "राजस्थान का यह कानून प्लेटफॉर्म आधारित गिग कामगारों के लिए कल्याण बोर्ड, कामगारों का पंजीकरण और प्लेटफॉर्म के योगदान से कल्याण कोष बनाता है।"
+    },
+    "benefit": {"en": "State registration, welfare board schemes and a grievance channel", "hi": "राज्य पंजीकरण, कल्याण बोर्ड की योजनाएँ और शिकायत का रास्ता"},
+    "cost": {"en": "Free", "hi": "मुफ्त"},
+    "how_to_apply": {
+      "en": "Contact the Rajasthan Labour Department or your district labour office to register with the gig workers welfare board.",
+      "hi": "गिग कामगार कल्याण बोर्ड में पंजीकरण के लिए राजस्थान श्रम विभाग या ज़िला श्रम कार्यालय से संपर्क करें।"
+    },
+    "documents": ["aadhaar", "work_records"],
+    "rules": {"states": ["Rajasthan"], "work_types": ["delivery", "ride_driver"]},
+    "official_url": "https://labour.rajasthan.gov.in",
+    "source_url": "https://www.drishtiias.com/daily-updates/daily-news-analysis/rajasthan-platform-based-gig-workers-registration-and-welfare-bill-2023/print_manually"
+  },
+  {
+    "id": "karnataka_gig_law",
+    "category": "state",
+    "name": {"en": "Karnataka Platform-Based Gig Workers law, 2025", "hi": "कर्नाटक प्लेटफॉर्म आधारित गिग कामगार कानून, 2025"},
+    "summary": {
+      "en": "Karnataka's 2025 law sets up a gig workers welfare board and a welfare fee paid by platforms. Platforms must give reasons and 14 days' notice before ending your contract, and payout or deactivation complaints go to an internal dispute committee, then to the board.",
+      "hi": "कर्नाटक का 2025 कानून गिग कामगार कल्याण बोर्ड और प्लेटफॉर्म द्वारा दिया जाने वाला कल्याण शुल्क बनाता है। अनुबंध खत्म करने से पहले प्लेटफॉर्म को कारण और 14 दिन का नोटिस देना होगा; भुगतान या आईडी बंद होने की शिकायत पहले आंतरिक विवाद समिति, फिर बोर्ड के पास जाती है।"
+    },
+    "benefit": {"en": "14 days' notice with reasons before termination; a formal dispute process", "hi": "आईडी बंद करने से पहले कारण सहित 14 दिन का नोटिस; औपचारिक शिकायत प्रक्रिया"},
+    "cost": {"en": "Free", "hi": "मुफ्त"},
+    "how_to_apply": {
+      "en": "Contact the Karnataka Labour Department to register with the gig workers welfare board. Check the latest status of the law with them.",
+      "hi": "गिग कामगार कल्याण बोर्ड में पंजीकरण के लिए कर्नाटक श्रम विभाग से संपर्क करें और कानून की ताज़ा स्थिति वहीं से पूछें।"
+    },
+    "documents": ["aadhaar", "work_records"],
+    "rules": {"states": ["Karnataka"], "work_types": ["delivery", "ride_driver"]},
+    "official_url": "https://labour.karnataka.gov.in",
+    "source_url": "https://prsindia.org/bills/states/the-karnataka-platform-based-gig-workers-social-security-and-welfare-bill-2025"
+  }
+]

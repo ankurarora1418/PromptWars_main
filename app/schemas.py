@@ -55,7 +55,13 @@ ClientToday = Field(default=None, description="The worker's local date (phones m
 
 
 class Profile(StrictModel):
-    """Worker context. Kept on the worker's device; sent with each request, never stored."""
+    """Worker context. Kept on the worker's device; sent with each request, never stored.
+
+    Frozen (immutable and hashable) so pure functions of the profile, such as scheme
+    matching, can be memoised safely.
+    """
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, frozen=True)
 
     language: LanguageCode = "en"
     work_type: WorkType = "delivery"

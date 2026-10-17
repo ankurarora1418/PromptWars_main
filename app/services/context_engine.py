@@ -14,7 +14,7 @@ from datetime import date
 
 from app.languages import offline_language
 from app.schemas import EarningEntry, Profile
-from app.services.earnings import alert_message, money, summarize
+from app.services.earnings import EarningsSummary, alert_message, money, summarize
 from app.services.eligibility import match_schemes
 from app.services.planner import plan_message, plan_week
 from app.services.safety import NIGHT_HOURS, select_tips
@@ -112,14 +112,22 @@ class Card:
 
 
 def build_cards(
-    profile: Profile, hour: int, entries: list[EarningEntry], today: date | None = None
+    profile: Profile,
+    hour: int,
+    entries: list[EarningEntry],
+    today: date | None = None,
+    summary: EarningsSummary | None = None,
 ) -> list[Card]:
-    """Return up to ``MAX_CARDS`` cards, most important first."""
+    """Return up to ``MAX_CARDS`` cards, most important first.
+
+    ``summary`` lets a caller that already summarised ``entries`` pass it in, so the earnings
+    maths runs once per request.
+    """
     lang = offline_language(profile.language)
     text = _TEXT[lang]
     reasons = _REASONS[lang]
     cards: list[Card] = []
-    summary = summarize(entries)
+    summary = summary or summarize(entries)
     alerts = {alert.code: alert for alert in summary.alerts}
 
     def add(card: Card, **reason_data: object) -> None:

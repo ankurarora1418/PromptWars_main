@@ -18,7 +18,7 @@ from app.languages import offline_language
 from app.schemas import ChatRequest
 from app.services import grievance
 from app.services.context_engine import build_cards
-from app.services.earnings import alert_message, offline_explanation, summarize
+from app.services.earnings import EarningsSummary, alert_message, offline_explanation, summarize
 from app.services.eligibility import match_schemes
 from app.services.intent import rank_intents
 from app.services.planner import plan_message, plan_week
@@ -103,8 +103,9 @@ def _issue_from_text(message: str) -> str | None:
     return None
 
 
-def _earnings_part(req: ChatRequest, lang: str, today: date) -> tuple[dict, list[str]]:
-    summary = summarize(req.entries)
+def _earnings_part(
+    req: ChatRequest, lang: str, today: date, summary: EarningsSummary
+) -> tuple[dict, list[str]]:
     if not summary.days_worked:
         return {"earnings_summary": "no days logged yet"}, [_TEXT[lang]["no_entries"]]
     data = summary.to_dict()
@@ -165,7 +166,8 @@ def build_context(req: ChatRequest, today: date | None = None) -> AssistantConte
     today = today or req.today or date.today()
     intents = [intent.name for intent in rank_intents(req.message, limit=MAX_INTENTS)]
 
-    cards = build_cards(req.profile, req.hour, req.entries, today)
+    summary = summarize(req.entries)  # computed once, shared by the cards and the earnings facts
+    cards = build_cards(req.profile, req.hour, req.entries, today, summary=summary)
     priorities = [{"title": c.title, "why": c.reason} for c in cards[:MAX_PRIORITIES]]
     facts: dict[str, Any] = {
         "worker_profile": {
@@ -183,7 +185,7 @@ def build_context(req: ChatRequest, today: date | None = None) -> AssistantConte
     lines: list[str] = []
     for intent in intents:
         if intent == "earnings":
-            part_facts, part_lines = _earnings_part(req, lang, today)
+            part_facts, part_lines = _earnings_part(req, lang, today, summary)
         elif intent == "safety":
             part_facts, part_lines = _safety_part(req, lang)
         elif intent == "schemes":

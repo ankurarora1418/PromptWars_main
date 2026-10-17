@@ -88,7 +88,6 @@
   "hasEpfo": "I get PF or ESIC from an employer",
   "paysTax": "I pay income tax",
   "saveProfile": "Save",
-
   "greetingMorning": "Good morning. Here is what matters today.",
   "greetingAfternoon": "Good afternoon. Here is what matters today.",
   "greetingEvening": "Good evening. Here is what matters now.",
@@ -146,5 +145,11 @@
   "errorNetwork": "Could not reach Saathi. Check your internet and try again.",
   "errorRateLimit": "Too many requests. Wait a minute and try again.",
   "errorGeneric": "Something went wrong. Please try again.",
-  "errorForm": "Please check the form."
+  "errorForm": "Please check the form.",
+  "weeklyGoal": "Weekly take-home goal (₹, optional)",
+  "weeklyGoalHint": "Saathi plans the hours you need — and warns you if the goal would need unsafe hours.",
+  "weeklyGoalTitle": "This week's goal: {goal}",
+  "goalProgress": "{percent}% of weekly goal reached",
+  "goalEarned": "Earned so far: {earned} ({percent}%)",
+  "whyThis": "Why you see this:"
 }

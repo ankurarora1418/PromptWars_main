@@ -27,6 +27,7 @@ export function initProfile({ languages, states, onSave }) {
       shift: data.get("shift"),
       age: numberOrNull("age"),
       monthly_income: numberOrNull("monthly_income"),
+      weekly_goal: numberOrNull("weekly_goal"),
     };
     CHECKBOXES.forEach((name) => {
       profile[name] = data.get(name) === "on";
@@ -47,6 +48,7 @@ export function openProfile() {
   f.shift.value = profile.shift;
   f.age.value = profile.age ?? "";
   f.monthly_income.value = profile.monthly_income ?? "";
+  f.weekly_goal.value = profile.weekly_goal ?? "";
   CHECKBOXES.forEach((name) => {
     f[name].checked = Boolean(profile[name]);
   });

@@ -34,6 +34,21 @@ function chart(daily) {
   );
 }
 
+function planPanel(plan) {
+  const percent = Math.round(plan.progress * 100);
+  const tone = plan.status === "unsafe" ? "warning" : "info";
+  return el(
+    "section",
+    { class: `panel plan tone-${tone}`, attrs: { "aria-labelledby": "plan-title" } },
+    el("h2", { attrs: { id: "plan-title" }, text: t("weeklyGoalTitle", { goal: formatMoney(plan.goal) }) }),
+    el("progress", {
+      attrs: { max: "100", value: String(percent), "aria-label": t("goalProgress", { percent }) },
+    }),
+    el("p", { class: "plan-progress", text: t("goalEarned", { earned: formatMoney(plan.earned), percent }) }),
+    el("p", { text: plan.message }),
+  );
+}
+
 function alertBox(alert) {
   const actions = [];
   if (alert.action?.startsWith("grievance:")) {
@@ -88,7 +103,7 @@ async function refresh() {
   }
   showLoading(result);
   try {
-    const data = await post("/api/earnings/summary", { profile: getProfile(), entries });
+    const data = await post("/api/earnings/summary", { profile: getProfile(), entries, today: todayISO() });
     const s = data.summary;
     clear(result).append(
       el(
@@ -99,6 +114,7 @@ async function refresh() {
         stat(t("perKm"), s.net_per_km === null ? "—" : `₹${s.net_per_km}`),
         stat(t("daysWorked"), String(s.days_worked)),
       ),
+      data.plan ? planPanel(data.plan) : null,
       ...s.alerts.filter((a) => a.code !== "best_platform").map(alertBox),
       data.explanation ? answerBlock(data.explanation) : null,
       s.daily.length > 1 ? chart(s.daily) : null,

@@ -33,6 +33,7 @@ export const DEFAULT_PROFILE = {
   pays_income_tax: false,
   eshram_registered: false,
   has_bank_account: true,
+  weekly_goal: null,
 };
 
 export function hasProfile() {

@@ -167,6 +167,20 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .card-body { padding: 14px 16px; }
 .card h3 { margin: 0 0 4px; font-size: var(--step-0); }
 .card p { margin: 0 0 10px; }
+.card .card-reason { font-size: 0.9rem; color: var(--ink-soft); }
+.card-reason-label { font-weight: 700; }
+
+/* ---------- weekly goal plan ---------- */
+.plan h2 { margin-top: 0; font-size: var(--step-1); }
+.plan.tone-warning { border-left: 6px solid var(--stop); background: var(--stop-bg); }
+.plan progress {
+  width: 100%; height: 14px; appearance: none; border: 1px solid var(--ink);
+  border-radius: 999px; overflow: hidden; background: var(--paper);
+}
+.plan progress::-webkit-progress-bar { background: var(--paper); }
+.plan progress::-webkit-progress-value { background: var(--go); }
+.plan progress::-moz-progress-bar { background: var(--go); }
+.plan-progress { font-weight: 700; margin: 8px 0 4px; }
 
 /* ---------- answers ---------- */
 .answer {

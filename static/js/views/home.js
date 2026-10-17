@@ -1,6 +1,6 @@
 // Home: context-ranked "Today for you" cards and the free-form Ask box.
 import { post } from "../api.js";
-import { answerBlock, clear, el, showError, showLoading, withBusy } from "../dom.js";
+import { answerBlock, clear, el, showError, showLoading, todayISO, withBusy } from "../dom.js";
 import { t } from "../i18n.js";
 import { navigate } from "../router.js";
 import { entriesForApi, getProfile } from "../store.js";
@@ -39,6 +39,7 @@ function renderCards(cards) {
           { class: "card-body" },
           el("h3", { text: card.title }),
           el("p", { text: card.body }),
+          card.reason ? el("p", { class: "card-reason" }, el("span", { class: "card-reason-label", text: `${t("whyThis")} ` }), card.reason) : null,
           el("button", {
             class: card.tone === "warning" ? "btn btn-secondary" : "btn btn-quiet",
             attrs: { type: "button" },
@@ -57,7 +58,7 @@ async function loadCards() {
   const list = document.getElementById("home-cards");
   showLoading(list);
   try {
-    const data = await post("/api/home", { profile: getProfile(), hour, entries: entriesForApi() });
+    const data = await post("/api/home", { profile: getProfile(), hour, entries: entriesForApi(), today: todayISO() });
     renderCards(data.cards);
   } catch (error) {
     showError(list, error);
@@ -76,17 +77,21 @@ async function ask(event) {
   showLoading(result);
   await withBusy(form.querySelector("button"), async () => {
     try {
-      const data = await post("/api/chat", { profile: getProfile(), message: input.value.trim(), entries: entriesForApi() });
-      const actions = data.suggested_module
-        ? [
-            el("button", {
-              class: "btn btn-secondary",
-              attrs: { type: "button" },
-              text: t("openSection", { section: t(SECTION_KEYS[data.suggested_module]) }),
-              on: { click: () => navigate(data.suggested_module) },
-            }),
-          ]
-        : [];
+      const data = await post("/api/chat", {
+        profile: getProfile(),
+        message: input.value.trim(),
+        entries: entriesForApi(),
+        hour: new Date().getHours(),
+        today: todayISO(),
+      });
+      const actions = (data.suggested_modules || []).map((module, index) =>
+        el("button", {
+          class: index === 0 ? "btn btn-secondary" : "btn btn-quiet",
+          attrs: { type: "button" },
+          text: t("openSection", { section: t(SECTION_KEYS[module]) }),
+          on: { click: () => navigate(module) },
+        }),
+      );
       clear(result).append(answerBlock(data.answer, actions));
     } catch (error) {
       showError(result, error);

@@ -186,7 +186,7 @@ app/
   data/              schemes.json · helplines.json · safety_tips.json · documents.json
 static/              index.html · css/ · js/ (app, router, api, store, i18n, dom, speech, views/) · i18n/
 tests/               unit and API tests (pytest) · js/ browser-module tests (node:test)
-Dockerfile · deploy.sh · SECURITY.md · .github/ (CI, Dependabot)
+Dockerfile · deploy.sh · SECURITY.md · .github/workflows/ci.yml
 ```
 
 ## Assumptions

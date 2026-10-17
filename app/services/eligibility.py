@@ -6,7 +6,6 @@ after one action, e.g. registering on e-Shram) or ``not_eligible`` with the reas
 """
 
 from dataclasses import dataclass, field
-from functools import lru_cache
 
 from app.languages import offline_language
 from app.schemas import Profile
@@ -42,7 +41,7 @@ _REASONS = {
 }
 
 
-@dataclass(frozen=True)
+@dataclass
 class SchemeMatch:
     id: str
     category: str
@@ -89,16 +88,7 @@ def _check(rules: dict, profile: Profile) -> tuple[list[str], list[str]]:
 
 
 def match_schemes(profile: Profile) -> list[SchemeMatch]:
-    """Evaluate every curated scheme for this worker, best matches first.
-
-    Results depend only on the (immutable) profile and the static knowledge base, so they are
-    memoised: the home screen, Ask and Schemes reuse one evaluation instead of repeating it.
-    """
-    return list(_match_schemes(profile))
-
-
-@lru_cache(maxsize=1024)
-def _match_schemes(profile: Profile) -> tuple[SchemeMatch, ...]:
+    """Evaluate every curated scheme for this worker, best matches first."""
     lang = offline_language(profile.language)
     reasons_text = _REASONS[lang]
     results: list[SchemeMatch] = []
@@ -132,14 +122,14 @@ def _match_schemes(profile: Profile) -> tuple[SchemeMatch, ...]:
             )
         )
     results.sort(key=lambda m: STATUS_ORDER[m.status])
-    return tuple(results)
+    return results
 
 
 def scheme_facts(scheme_id: str, profile: Profile) -> SchemeMatch | None:
     """The match result for one scheme, or None if the id is unknown."""
     if scheme_id not in knowledge.scheme_by_id():
         return None
-    return next(m for m in _match_schemes(profile) if m.id == scheme_id)
+    return next(m for m in match_schemes(profile) if m.id == scheme_id)
 
 
 def offline_scheme_explanation(match: SchemeMatch, lang: str) -> str:

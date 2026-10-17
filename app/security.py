@@ -1,16 +1,13 @@
-"""HTTP hardening: security headers, request-size limit and per-IP rate limiting.
-
-All three are pure ASGI middleware rather than ``BaseHTTPMiddleware``: they never buffer or
-re-wrap the response body, add no extra task per request, and pass streaming responses
-straight through, which keeps per-request overhead minimal on a small Cloud Run instance.
-"""
+"""HTTP hardening: security headers, request-size limit and per-IP rate limiting."""
 
 import time
 from collections import deque
 
-from starlette.datastructures import Headers, MutableHeaders
-from starlette.responses import JSONResponse
-from starlette.types import ASGIApp, Message, Receive, Scope, Send
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import Response
+from starlette.types import ASGIApp
 
 # Strict CSP: only our own scripts and styles; no inline script, no third-party origins.
 CONTENT_SECURITY_POLICY = "; ".join(
@@ -42,56 +39,33 @@ SECURITY_HEADERS = {
 MAX_BODY_BYTES = 8_000_000  # base64 photo of up to ~4 MB plus JSON overhead
 
 
-STATIC_CACHE_CONTROL = "public, max-age=86400"  # static assets: cache a day, ETag revalidates
-
-
-class SecurityHeadersMiddleware:
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to every response and stop API responses being cached."""
 
-    def __init__(self, app: ASGIApp) -> None:
-        self.app = app
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] != "http":
-            await self.app(scope, receive, send)
-            return
-        path: str = scope["path"]
-
-        async def send_with_headers(message: Message) -> None:
-            if message["type"] == "http.response.start":
-                headers = MutableHeaders(scope=message)
-                for name, value in SECURITY_HEADERS.items():
-                    headers.setdefault(name, value)
-                if path.startswith("/api/"):
-                    headers["Cache-Control"] = "no-store"
-                elif path.startswith("/static/"):
-                    headers.setdefault("Cache-Control", STATIC_CACHE_CONTROL)
-            await send(message)
-
-        await self.app(scope, receive, send_with_headers)
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        response = await call_next(request)
+        for name, value in SECURITY_HEADERS.items():
+            response.headers.setdefault(name, value)
+        if request.url.path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-store"
+        elif request.url.path.startswith("/static/"):
+            response.headers.setdefault("Cache-Control", "public, max-age=3600")
+        return response
 
 
-class BodySizeLimitMiddleware:
+class BodySizeLimitMiddleware(BaseHTTPMiddleware):
     """Reject requests whose declared body is larger than ``MAX_BODY_BYTES``."""
 
-    def __init__(self, app: ASGIApp) -> None:
-        self.app = app
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] == "http":
-            length = Headers(scope=scope).get("content-length")
-            if length is not None:
-                try:
-                    too_big = int(length) > MAX_BODY_BYTES
-                except ValueError:
-                    await JSONResponse({"detail": "Invalid Content-Length"}, status_code=400)(
-                        scope, receive, send
-                    )
-                    return
-                if too_big:
-                    await JSONResponse({"detail": "Request too large"}, status_code=413)(scope, receive, send)
-                    return
-        await self.app(scope, receive, send)
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        length = request.headers.get("content-length")
+        if length is not None:
+            try:
+                too_big = int(length) > MAX_BODY_BYTES
+            except ValueError:
+                return JSONResponse({"detail": "Invalid Content-Length"}, status_code=400)
+            if too_big:
+                return JSONResponse({"detail": "Request too large"}, status_code=413)
+        return await call_next(request)
 
 
 class RateLimiter:
@@ -132,33 +106,30 @@ class RateLimiter:
                 del self._hits[key]
 
 
-def client_ip(scope: Scope, trust_proxy: bool) -> str:
+def client_ip(request: Request, trust_proxy: bool) -> str:
     """Client IP, using the first X-Forwarded-For hop when behind a trusted proxy."""
     if trust_proxy:
-        forwarded = Headers(scope=scope).get("x-forwarded-for")
+        forwarded = request.headers.get("x-forwarded-for")
         if forwarded:
             return forwarded.split(",")[0].strip()
-    client = scope.get("client")
-    return client[0] if client else "unknown"
+    return request.client.host if request.client else "unknown"
 
 
-class RateLimitMiddleware:
+class RateLimitMiddleware(BaseHTTPMiddleware):
     """Apply :class:`RateLimiter` to state-changing API calls (POST /api/...)."""
 
     def __init__(self, app: ASGIApp, limiter: RateLimiter, trust_proxy: bool) -> None:
-        self.app = app
+        super().__init__(app)
         self.limiter = limiter
         self.trust_proxy = trust_proxy
 
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] == "http" and scope["method"] == "POST" and scope["path"].startswith("/api/"):
-            allowed, retry_after = self.limiter.allow(client_ip(scope, self.trust_proxy))
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        if request.method == "POST" and request.url.path.startswith("/api/"):
+            allowed, retry_after = self.limiter.allow(client_ip(request, self.trust_proxy))
             if not allowed:
-                response = JSONResponse(
+                return JSONResponse(
                     {"detail": "Too many requests. Please wait a moment and try again."},
                     status_code=429,
                     headers={"Retry-After": str(retry_after)},
                 )
-                await response(scope, receive, send)
-                return
-        await self.app(scope, receive, send)
+        return await call_next(request)

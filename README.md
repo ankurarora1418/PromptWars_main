@@ -112,9 +112,6 @@ flowchart LR
 
 - Gemini Flash; AI is called only when it adds value (e.g. safety tips and scheme matching need no AI call).
 - Knowledge base loaded once and cached; prompt cache for repeated questions.
-- Scheme matching is memoised per (immutable) profile, and each request summarises earnings once and shares it between the home cards and the Ask facts.
-- Security, size-limit and rate-limit layers are pure ASGI middleware: no response buffering and no extra task per request.
-- Static assets are cached for a day (ETag revalidation); API responses are never cached.
 - No frontend framework or build step; total repo well under 1 MB; GZip for responses over 1 KB.
 - Photos resized on the phone to ≤1600 px JPEG before upload (less mobile data).
 - Cloud Run scales to zero; `--max-instances 3` caps cost.
@@ -130,7 +127,7 @@ flowchart LR
 
 ## Testing
 
-**121 automated tests** — 113 Python tests at **98% line coverage** plus 8 browser-module tests — with no network needed (Gemini is replaced by a fake client):
+**117 automated tests** — 109 Python tests at **98% line coverage** plus 8 browser-module tests — with no network needed (Gemini is replaced by a fake client):
 
 - **Planner:** every decision branch (no data, achieved, on track, stretch, unsafe via daily *and* weekly caps, week over), history-rate fallback, best days/platform, Hindi text, zero-hour safety.
 - **Unit:** earnings maths and alerts, eligibility rules, multi-intent ranking, assistant offline answers, safety selection, intent routing, home-card ranking, PII masking, prompt construction and injection-delimiter safety, cache/timeout/fallback behaviour, rate limiter, image validation.

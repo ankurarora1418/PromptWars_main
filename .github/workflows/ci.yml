@@ -8,7 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  backend:
+    name: Lint, types, security audit and tests (Python)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,9 +20,24 @@ jobs:
           cache-dependency-path: requirements-dev.txt
       - name: Install
         run: pip install -r requirements-dev.txt
-      - name: Lint
+      - name: Lint and format
         run: |
           ruff check .
           ruff format --check .
-      - name: Test
+      - name: Type check
+        run: mypy
+      - name: Dependency vulnerability audit
+        run: pip-audit -r requirements.txt
+      - name: Test with coverage gate
         run: pytest --cov=app --cov-report=term-missing --cov-fail-under=90
+
+  frontend:
+    name: Unit tests (browser modules)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test
+        run: npm test

@@ -1,0 +1,12 @@
+{
+  "name": "saathi-frontend-tests",
+  "private": true,
+  "description": "Dependency-free unit tests for Saathi's browser modules (Node's built-in test runner).",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/js/*.test.mjs\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

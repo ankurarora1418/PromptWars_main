@@ -11,7 +11,7 @@ import logging
 import time
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 
 from app.config import Settings
 from app.services.prompts import system_instruction
@@ -73,11 +73,12 @@ class GeminiClient:
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
         self._cache = TTLCache(settings.ai_cache_size, settings.ai_cache_ttl_seconds)
-        self._client = None
-        if settings.ai_enabled:
+        self._client: Any = None
+        key = settings.gemini_api_key
+        if settings.ai_enabled and key is not None:
             from google import genai  # imported lazily so tests never need network setup
 
-            self._client = genai.Client(api_key=settings.gemini_api_key.get_secret_value())
+            self._client = genai.Client(api_key=key.get_secret_value())
 
     @property
     def enabled(self) -> bool:
@@ -98,7 +99,7 @@ class GeminiClient:
 
     async def generate(self, prompt: str, language: str, image: ImageInput | None = None) -> str | None:
         """Return model text, or ``None`` so the caller falls back to its template."""
-        if not self.enabled:
+        if self._client is None:
             return None
 
         cache_key = None

@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+tests
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+*.md
+deploy.sh
+requirements-dev.txt

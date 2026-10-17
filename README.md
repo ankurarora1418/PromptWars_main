@@ -11,7 +11,7 @@ A multilingual, GenAI-powered assistant for India's gig and informal workers —
 - **Weekly income-goal planner** — set a weekly take-home goal; Saathi computes hours needed at *your* current ₹/hour, the best weekdays and platform, and **refuses to push unsafe hours** (>12 h/day or >60 h/week), suggesting a realistic goal instead.
 - **Explainable decisions** — every "Today for you" card carries a plain-language *"Why you see this"* reason.
 - **Context-aware Ask** — questions are routed to up to **two** modules at once (e.g. a late payout *and* a blocked ID), and every answer is grounded in a snapshot of the worker's current priorities. The offline answer is built from the same facts, so Ask stays genuinely useful with no AI.
-- **Stronger engineering** — `mypy` type checks, `pip-audit` and Dependabot, browser-module unit tests (Node's built-in runner), `SECURITY.md`, CI split into backend and frontend jobs.
+- **Stronger engineering** — `mypy` type checks, `pip-audit` dependency audit, browser-module unit tests (Node's built-in runner), `SECURITY.md`, CI split into backend and frontend jobs.
 
 ---
 
@@ -102,7 +102,7 @@ flowchart LR
 - **Uploads:** base64 decoded strictly, size-capped (4 MB), and checked by magic bytes (JPEG/PNG/WebP); the browser re-encodes photos, which also strips EXIF/GPS.
 - **HTTP hardening:** strict Content-Security-Policy (no inline script or style, no third-party origins), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, HSTS, `Cache-Control: no-store` on API responses, 8 MB request cap, per-IP rate limit (30 POST/min), server header removed.
 - **XSS-safe rendering:** all dynamic text is inserted with `textContent`, never `innerHTML`.
-- **Supply chain:** pinned dependencies, `pip-audit` in CI, Dependabot for pip and Actions; typed code checked by `mypy`. See [SECURITY.md](SECURITY.md) for the threat model.
+- **Supply chain:** pinned dependencies, `pip-audit` in CI; typed code checked by `mypy`. See [SECURITY.md](SECURITY.md) for the threat model.
 - **Client dates validated:** the phone's local date is accepted only within ±1 day of the server date.
 - **Container:** slim image, pinned dependencies, runs as a non-root user; the runtime service account can read only its one secret.
 

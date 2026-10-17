@@ -12,7 +12,7 @@ Saathi serves low-income workers, so it is built to hold as little of their data
 | Secret exposure | The Gemini key is read from the environment / Secret Manager only; `.env` is git-ignored; `/api/health` reports only whether AI is on. |
 | XSS / clickjacking | Strict CSP (`script-src 'self'`, no inline code, no third-party origins), `textContent` rendering only, `X-Frame-Options: DENY`, `frame-ancestors 'none'`. |
 | Abuse / cost attacks | Per-IP rate limit, 8 MB body cap, strict Pydantic bounds with `extra="forbid"`, image magic-byte checks, Gemini timeout and response cache, Cloud Run max-instances cap. |
-| Vulnerable dependencies | Pinned versions, `pip-audit` in CI, Dependabot for pip and GitHub Actions. |
+| Vulnerable dependencies | Pinned versions and `pip-audit` in CI (updates are applied deliberately to keep a single reviewed branch). |
 | Container breakout impact | Slim image running as an unprivileged user. |
 
 ## Reporting a vulnerability

@@ -93,8 +93,8 @@ class GeminiClient:
             "max_output_tokens": self._settings.ai_max_output_tokens,
         }
         level = self._settings.gemini_thinking_level.strip().upper()
-        if level:
-            config["thinking_config"] = types.ThinkingConfig(thinking_level=level)
+        if level in types.ThinkingLevel.__members__:  # ignore unknown values instead of failing calls
+            config["thinking_config"] = types.ThinkingConfig(thinking_level=types.ThinkingLevel[level])
         return types.GenerateContentConfig(**config)
 
     async def generate(self, prompt: str, language: str, image: ImageInput | None = None) -> str | None:

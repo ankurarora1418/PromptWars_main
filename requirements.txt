@@ -1,6 +1,6 @@
 # Runtime dependencies (pinned for reproducible builds)
 fastapi==0.143.3
-uvicorn[standard]==0.53.0
+uvicorn[standard]==0.54.0
 pydantic==2.13.5
 pydantic-settings==2.16.0
 google-genai==2.31.0
